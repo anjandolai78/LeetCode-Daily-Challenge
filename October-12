@@ -1,0 +1,77 @@
+# LeetCode 2897: Apply Operations on Array to Maximize Sum of Squares
+
+**Difficulty:** Hard  
+**Topics:** Greedy, Bit Manipulation
+
+## Approach
+
+The goal is to maximize the sum of squares of `k` elements after performing the allowed bitwise AND (`&`) and OR (`|`) operations.
+
+1. **Count set bits:** Traverse the array and count how many numbers have a set bit (`1`) at each bit position.
+2. **Construct numbers greedily:** Build each of the `k` numbers by including every bit position that still has available set bits.
+3. **Update bit counts:** Whenever a bit is used to construct a number, decrease its count by one.
+4. **Calculate the sum:** Square each constructed number and add it to the answer, taking modulo `10^9 + 7` to prevent overflow.
+
+### Example
+
+**Input:** `nums = [2, 6, 5, 8], k = 2`
+
+**Binary representations:**
+- `2 = 0010`
+- `6 = 0110`
+- `5 = 0101`
+- `8 = 1000`
+
+The available set bits can be distributed to construct the numbers `15` and `6`.
+
+**Output calculation:**
+
+`15² + 6² = 225 + 36 = 261`
+
+**Output:** `261`
+
+## Complexity Analysis
+
+Let `n` be the length of `nums` and `B` be the number of bits considered (31 for this solution).
+
+- **Time Complexity:** `O(B × n + B × k)`, which simplifies to `O(n + k)` because `B` is constant.
+- **Auxiliary Space Complexity:** `O(B) = O(1)`, since the bit-count array has a fixed size of 31.
+
+## Key Learning
+
+Instead of simulating every AND and OR operation, count the available set bits and greedily construct the numbers to maximize the sum of squares.
+-- code--
+
+class Solution {
+    public int maxSum(List<Integer> nums, int k) {
+        int MOD = 1_000_000_007;
+        int[] count = new int[31];
+
+        // Count set bits at every position
+        for (int num : nums) {
+            for (int bit = 0; bit < 31; bit++) {
+                if ((num & (1 << bit)) != 0) {
+                    count[bit]++;
+                }
+            }
+        }
+
+        long ans = 0;
+
+        // Construct k maximum numbers greedily
+        for (int i = 0; i < k; i++) {
+            long num = 0;
+
+            for (int bit = 0; bit < 31; bit++) {
+                if (count[bit] > 0) {
+                    num |= (1L << bit);
+                    count[bit]--;
+                }
+            }
+
+            ans = (ans + num * num) % MOD;
+        }
+
+        return (int) ans;
+    }
+}
