@@ -1,0 +1,80 @@
+LeetCode 3723 — Maximize Sum of Squares of Digits
+
+Difficulty: Medium
+Topics: Greedy, Math, String
+Language: Java
+
+Problem Summary
+
+Given two positive integers num and sum, construct a positive integer n such that:
+
+n contains exactly num digits.
+
+The sum of its digits equals sum.
+
+The sum of the squares of its digits is maximized.
+
+If multiple integers achieve the maximum score, return the numerically largest one as a string. If no valid integer exists, return an empty string.
+
+Approach: Greedy
+
+The key observation is that larger digits contribute more to the sum of squares.
+
+For example:
+
+3² + 0² = 9
+
+2² + 1² = 5
+
+Both pairs have a digit sum of 3, but the first pair has a higher score.
+
+Therefore, we should use as many 9s as possible, followed by the remaining sum as one digit, and fill the remaining positions with zeros.
+
+Algorithm
+
+If sum > 9 * num, return an empty string because the required digit sum is impossible.
+
+Calculate the number of nines using sum / 9.
+
+Calculate the remaining sum using sum % 9.
+
+Append all the nines to the answer.
+
+If the remainder is greater than zero, append it.
+
+Append zeros until the answer contains exactly num digits.
+
+
+Return the resulting string.
+
+## Java Solution
+
+Here is my Java solution using the Greedy approach.
+```java
+class Solution {
+    public String maxSumOfSquares(int num, int sum) {
+        if (sum > 9 * num) {
+            return "";
+        }
+
+        StringBuilder ans = new StringBuilder();
+
+        int nines = sum / 9;
+        int remainder = sum % 9;
+
+        for (int i = 0; i < nines; i++) {
+            ans.append('9');
+        }
+
+        if (remainder > 0) {
+            ans.append(remainder);
+        }
+
+        while (ans.length() < num) {
+            ans.append('0');
+        }
+
+        return ans.toString();
+    }
+}
+```
